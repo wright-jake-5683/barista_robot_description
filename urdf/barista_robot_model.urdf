@@ -625,7 +625,8 @@
         <update_rate>100.0</update_rate>
         <plugin name="laser" filename="libgazebo_ros_ray_sensor.so">
           <ros>
-            <remapping>~/out:=laser_scan</remapping>
+            <namespace>/barista_bot</namespace>
+            <remapping>~/out:=/scan</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
         </plugin>
