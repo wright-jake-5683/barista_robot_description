@@ -57,7 +57,7 @@
 </link>
 
 <joint name="base_link_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.15" />
+    <origin rpy="0 0 0" xyz="0 0 0.135" />
     <parent link="base_link" />
     <child link="main_body_link" />
 </joint>
@@ -123,21 +123,17 @@
 <xacro:caster_wheel position="back" />
 
 <joint name="main_body_to_front_caster_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="0.120 0 -0.0878" />
-    <parent link="main_body_link" />
-    <child link="front_yaw_link" />
+    <origin rpy="0 0 0" xyz="0.125 0 -0.1" />
+    <parent link="main_body_link"/>
+    <child link="front_caster_link"/>
     <axis xyz="0 0 1" />
-    <limit effort="1000.0" velocity="100.0" />
-    <dynamics damping="0.0" friction="0.1"/>
 </joint> 
 
-<joint name="main_body_to_back_yaw_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="-0.120 0 -0.0878" />
-    <parent link="main_body_link" />
-    <child link="back_yaw_link" />
+<joint name="main_body_to_back_caster_joint" type="continuous">
+    <origin rpy="0 0 0" xyz="-0.125 0 -0.1" />
+    <parent link="main_body_link"/>
+    <child link="back_caster_link"/>
     <axis xyz="0 0 1" />
-    <limit effort="1000.0" velocity="100.0" />
-    <dynamics damping="0.0" friction="0.1"/>
 </joint>
 
 
@@ -164,12 +160,7 @@
 
     <joint_name>main_body_to_right_wheel_link_joint</joint_name>
     <joint_name>main_body_to_left_wheel_link_joint</joint_name>
-    <joint_name>main_body_to_front_yaw_joint</joint_name>
-    <joint_name>main_body_to_back_yaw_joint</joint_name>
-    <joint_name>front_yaw_to_front_roll_joint</joint_name>
-    <joint_name>front_roll_to_front_pitch_joint</joint_name> 
-    <joint_name>back_yaw_to_front_roll_joint</joint_name>  
-    <joint_name>back_roll_to_front_pitch_joint</joint_name>
+
     
 </plugin>
 </gazebo>
@@ -216,7 +207,7 @@
     <!-- Lidar Plugin -->
     <gazebo reference="laser_scan_link">
         <sensor name="sensor_ray" type="ray">
-            <pose>0 0 0 0 0 0</pose>
+            <pose>0 0 0.34 0 0 0</pose>
             <ray>
             <scan>
                 <horizontal>

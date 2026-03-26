@@ -27,6 +27,7 @@
 
     <gazebo reference="${link_name}">
         <kp>1000</kp>
+        <kp>10000000</kp>
         <kd>100</kd>
         <mu1>1.0</mu1>
         <mu2>1.0</mu2>
