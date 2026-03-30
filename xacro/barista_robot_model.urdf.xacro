@@ -10,9 +10,11 @@
 <xacro:arg name="robot_name" default="barista_bot"/>
 <xacro:arg name="include_laser" default="true"/>
 <xacro:arg name="gazebo_color" default="Gazebo/White"/>
+<xacro:arg name="color" default="White"/>
 
 <xacro:property name="robot_name" value="$(arg robot_name)"/>
 <xacro:property name="gazebo_color" value="$(arg gazebo_color)"/>
+<xacro:property name="color" value="$(arg color)"/>
 <xacro:property name="include_laser" value="$(arg include_laser)"/>
 
 <material name="blue">
@@ -46,7 +48,7 @@
         <geometry>
             <cylinder length="0.155" radius="0.178" />
         </geometry>
-        <material name="blue" />
+        <material name="${color}" />
     </visual>
 
     <collision>
@@ -142,7 +144,7 @@
 
 
 <!--Cup Holder Tray-->
-<xacro:cup_holder_tray color="${gazebo_color}" />
+<xacro:cup_holder_tray gazebo_color="${gazebo_color}" color="${color}"/>
 
 
 <joint name="main_body_to_cup_holder_link_joint" type="fixed">
@@ -194,8 +196,8 @@
         <publish_odom>true</publish_odom>
         <publish_odom_tf>true</publish_odom_tf>
 
-        <odometry_frame>odom</odometry_frame>
-        <robot_base_frame>base_link</robot_base_frame>
+        <odometry_frame>${robot_name}/odom</odometry_frame>
+        <robot_base_frame>${robot_name}/base_link</robot_base_frame>
 
     </plugin>
 </gazebo>

@@ -40,6 +40,19 @@ def generate_launch_description():
     print("GAZEBO MODELS PATH=="+str(os.environ["GAZEBO_MODEL_PATH"]))
     print("GAZEBO PLUGINS PATH=="+str(os.environ["GAZEBO_PLUGIN_PATH"]))
 
+##### RVIZ ################################################################################################################################################# RVIZ ############################################################################################################################################
+
+    # RVIZ Configuration
+    rviz_config_dir = os.path.join(get_package_share_directory(package_description), 'rviz', 'multi_robot_urdf_vis.rviz')
+    
+    rviz_node = Node(
+            package='rviz2',
+            executable='rviz2',
+            output='screen',
+            name='rviz_node',
+            parameters=[{'use_sim_time': True}],
+            arguments=['-d', rviz_config_dir])
+
 
 ##### Robot State Publishers & Spawn Nodes ##############################################################################################################
 
@@ -66,7 +79,8 @@ def generate_launch_description():
             'xacro ',
             xacro_path,
             ' robot_name:=', barista_bot_1_name,
-            ' gazebo_color:=Gazebo/Blue'
+            ' gazebo_color:=Gazebo/Blue',
+            ' color:=blue'
         ]),
         value_type=str
     )
@@ -76,7 +90,8 @@ def generate_launch_description():
             'xacro ',
             xacro_path,
             ' robot_name:=', barista_bot_2_name,
-            ' gazebo_color:=Gazebo/Red'
+            ' gazebo_color:=Gazebo/Red',
+            ' color:=blue'' color:=red'
         ]),
         value_type=str
     )
@@ -89,7 +104,16 @@ def generate_launch_description():
         namespace="rick",
         name='robot_state_publisher_node_barista_bot_1',
         emulate_tty=True,
-        parameters=[{'robot_description': barista_bot_1_description}],
+        parameters=[
+            {'robot_description': barista_bot_1_description}, 
+            {'use_sim_time': True},
+            {'frame_prefix': 'rick/'} 
+        ],
+        remappings=[
+            ('/rick/joint_states', '/rick/joint_states'),  # keep joint states namespaced
+            ('tf', '/tf'),          # publish TF globally
+            ('tf_static', '/tf_static')   # publish static TF globally
+        ],
         output="screen"
     )
     rsp_barista_bot_2 = Node(
@@ -98,7 +122,16 @@ def generate_launch_description():
         namespace="morty",
         name='robot_state_publisher_node_barista_bot_2',
         emulate_tty=True,
-        parameters=[{'robot_description': barista_bot_2_description}],
+        parameters=[
+            {'robot_description': barista_bot_2_description}, 
+            {'use_sim_time': True},
+            {'frame_prefix': 'morty/'}
+        ],
+        remappings=[
+            ('/morty/joint_states', '/morty/joint_states'),  # keep joint states namespaced
+            ('tf', '/tf'),          # publish TF globally
+            ('tf_static', '/tf_static')   # publish static TF globally
+        ],
         output="screen"
     )
 
@@ -107,6 +140,7 @@ def generate_launch_description():
         package='gazebo_ros',
         executable='spawn_entity.py',
         name='spawn_entity_barista_bot_1',
+        namespace="rick",
         output='screen',
         arguments=['-entity',
                    barista_bot_1_name,
@@ -119,6 +153,7 @@ def generate_launch_description():
         package='gazebo_ros',
         executable='spawn_entity.py',
         name='spawn_entity_barista_bot_2',
+        namespace="morty",
         output='screen',
         arguments=['-entity',
                    barista_bot_2_name,
@@ -127,6 +162,8 @@ def generate_launch_description():
                    '-topic', '/morty/robot_description'
                    ]
     )
+
+
 
 ##### Gazebo Launch Config ############################################################################################################################
     
@@ -162,6 +199,25 @@ def generate_launch_description():
         actions=[spawn_robot_barista_bot_2]
     )  
 
+##### World Static TF Publisher ##########################################################################################################################
+    rick_static_tf_pub = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher_world_rick_odom',
+            output='screen',
+            emulate_tty=True,
+            arguments=['0', '0', '0', '0', '0', '0', 'world', 'rick/odom']
+    )
+
+    morty_static_tf_pub = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher_world_morty_odom',
+            output='screen',
+            emulate_tty=True,
+            arguments=['1', '1', '0', '0', '0', '0', 'world', 'morty/odom']
+    )
+
     # create and return launch description object
     return LaunchDescription(
         [            
@@ -170,6 +226,9 @@ def generate_launch_description():
             rsp_barista_bot_1,
             rsp_barista_bot_2,
             delayed_spawn_1,
-            delayed_spawn_2
+            delayed_spawn_2,
+            rick_static_tf_pub,
+            morty_static_tf_pub,
+            rviz_node
         ]
     )
