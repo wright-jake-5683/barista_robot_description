@@ -1,15 +1,19 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="barista_bot">
 
-<xacro:property name="robot_name" value="$(arg robot_name)"/>
-
 <xacro:include filename="$(find barista_robot_description)/xacro/caster_wheel.xacro" />
 <xacro:include filename="$(find barista_robot_description)/xacro/cup_holder_tray.xacro" />
 <xacro:include filename="$(find barista_robot_description)/xacro/drive_wheel.xacro" />
 <xacro:include filename="$(find barista_robot_description)/xacro/laser_scanner.xacro" />
 <xacro:include filename="$(find barista_robot_description)/xacro/standoff_rod.xacro" />
 
+<xacro:arg name="robot_name" default="barista_bot"/>
 <xacro:arg name="include_laser" default="true"/>
+<xacro:arg name="gazebo_color" default="Gazebo/White"/>
+
+<xacro:property name="robot_name" value="$(arg robot_name)"/>
+<xacro:property name="gazebo_color" value="$(arg gazebo_color)"/>
+<xacro:property name="include_laser" value="$(arg include_laser)"/>
 
 <material name="blue">
       <color rgba="0.0 0.0 1.0 1"/>
@@ -65,7 +69,7 @@
 </joint>
 
 <gazebo reference="main_body_link">
-    <material>Gazebo/Blue</material>
+    <material>${gazebo_color}</material>
 </gazebo>
 
 
@@ -138,7 +142,7 @@
 
 
 <!--Cup Holder Tray-->
-<xacro:cup_holder_tray />
+<xacro:cup_holder_tray color="${gazebo_color}" />
 
 
 <joint name="main_body_to_cup_holder_link_joint" type="fixed">
@@ -199,7 +203,7 @@
 
 
 <!--Laser-->
-<xacro:if value="$(arg include_laser)">
+<xacro:if value="${include_laser}">
     <xacro:laser_scanner />
 
     <joint name="laser_scan_link_joint" type="fixed">
@@ -232,7 +236,7 @@
             <plugin name="laser" filename="libgazebo_ros_ray_sensor.so">
             <ros>
                 <namespace>/${robot_name}</namespace>
-                <remapping>~/out:=/scan</remapping>
+                <remapping>~/out:=scan</remapping>
             </ros>
             <output_type>sensor_msgs/LaserScan</output_type>
             </plugin>

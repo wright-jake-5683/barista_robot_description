@@ -11,6 +11,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import DeclareLaunchArgument
 from ament_index_python.packages import get_package_prefix
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 # this is the function launch system will look for
@@ -42,7 +43,6 @@ def generate_launch_description():
 
 ##### Robot State Publishers & Spawn Nodes ##############################################################################################################
 
-
     ####### DATA INPUT ##########
     xacro_file = 'barista_robot_model.urdf.xacro'
 
@@ -54,44 +54,51 @@ def generate_launch_description():
     orientation = [0.0, 0.0, 0.0]
     
     # Base Name or robot
-    robot_base_name = "barista_bot"
-    barista_bot_1_name = robot_base_name+"_"+str(1)
-    barista_bot_2_name = robot_base_name+"_"+str(2)
+    barista_bot_1_name = "rick"
+    barista_bot_2_name = "morty"
 
     print("Fetching XACRO File ==>")
     robot_model_path = os.path.join(get_package_share_directory('barista_robot_description'))
     xacro_path = os.path.join(robot_model_path, 'xacro', xacro_file)
+
+    barista_bot_1_description = ParameterValue(
+        Command([
+            'xacro ',
+            xacro_path,
+            ' robot_name:=', barista_bot_1_name,
+            ' gazebo_color:=Gazebo/Blue'
+        ]),
+        value_type=str
+    )
+
+    barista_bot_2_description = ParameterValue(
+        Command([
+            'xacro ',
+            xacro_path,
+            ' robot_name:=', barista_bot_2_name,
+            ' gazebo_color:=Gazebo/Red'
+        ]),
+        value_type=str
+    )
     
 
     # Robot State Publishers
     rsp_barista_bot_1 = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace="barista_bot_1_ns",
+        namespace="rick",
         name='robot_state_publisher_node_barista_bot_1',
         emulate_tty=True,
-        parameters=[{
-            'use_sim_time': True, 
-            'frame_prefix': f"{barista_bot_1_name}/",
-            'robot_description': Command([
-                f'xacro {xacro_path} robot_name:={barista_bot_1_name}'
-            ])
-        }],
+        parameters=[{'robot_description': barista_bot_1_description}],
         output="screen"
     )
     rsp_barista_bot_2 = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace="barista_bot_2_ns",
+        namespace="morty",
         name='robot_state_publisher_node_barista_bot_2',
         emulate_tty=True,
-        parameters=[{
-            'use_sim_time': True, 
-            'frame_prefix': f"{barista_bot_2_name}/",
-            'robot_description': Command([
-                f'xacro {xacro_path} robot_name:={barista_bot_2_name}'
-            ])
-        }],
+        parameters=[{'robot_description': barista_bot_2_description}],
         output="screen"
     )
 
@@ -105,7 +112,7 @@ def generate_launch_description():
                    barista_bot_1_name,
                    '-x', str(position_1[0]), '-y', str(position_1[1]), '-z', str(position_1[2]),
                    '-R', str(orientation[0]), '-P', str(orientation[1]), '-Y', str(orientation[2]),
-                   '-topic', '/barista_bot_1_ns/robot_description'
+                   '-topic', '/rick/robot_description'
                    ]
     )
     spawn_robot_barista_bot_2 = Node(
@@ -117,7 +124,7 @@ def generate_launch_description():
                    barista_bot_2_name,
                    '-x', str(position_2[0]), '-y', str(position_2[1]), '-z', str(position_2[2]),
                    '-R', str(orientation[0]), '-P', str(orientation[1]), '-Y', str(orientation[2]),
-                   '-topic', '/barista_bot_2_ns/robot_description'
+                   '-topic', '/morty/robot_description'
                    ]
     )
 
