@@ -215,7 +215,7 @@ def generate_launch_description():
             name='static_transform_publisher_world_morty_odom',
             output='screen',
             emulate_tty=True,
-            arguments=['1', '1', '0', '0', '0', '0', 'world', 'morty/odom']
+            arguments=['0', '0', '0', '0', '0', '0', 'world', 'morty/odom']
     )
 
     # create and return launch description object

@@ -247,7 +247,7 @@
 </gazebo>
 
 <joint name="main_body_to_right_wheel_link_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="0 0.148 -.1" />
+    <origin rpy="0 0 0" xyz="0 -0.148 -.1" />
     <parent link="main_body_link" />
     <child link="right_wheel_link" />
     <axis xyz="0 1 0" />
@@ -288,7 +288,7 @@
 </gazebo>
 
 <joint name="main_body_to_left_wheel_link_joint" type="continuous">
-    <origin rpy="0 0 0" xyz="0 -0.148 -0.1" />
+    <origin rpy="0 0 0" xyz="0 0.148 -0.1" />
     <parent link="main_body_link" />
     <child link="left_wheel_link" />
     <axis xyz="0 1 0" />
